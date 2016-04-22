@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/main.css">
+    </head>
+    
+    <body>
+        <!-- TODO: Please change lines 10 and 11 according to your actual project name and student names-->
+        <div class="topcorner">
+            <p>MPAA Film Rating Prediction</p>
+			<p>Yingbing ZHAO (yz672), Shibo ZANG (sz428), Yangwen WANG (yw762), Jingchen LI (jl3426)</p>
+        </div>
+        
+        <form class="form-inline global-search" method='GET'>
+            <h1 style="font-size: 55px; font-family:Futura; color: #4285F4">
+                C
+                <font color=#EA4335>S</font>
+                <font color=#FBBC05>4</font>
+                3
+                <font color=#34A853>0</font>
+                <font color=#EA4335>0</font>
+            </h1>
+            
+            <br><br>
+            
+            <div class="form-group">
+                <input id="input" type="text" name="search" class="form-control" placeholder="Key words of the movie title">
+            </div>
+            <button type="submit" class="btn btn-info"> Go! </button>
+        </form>
+        
+        <div class="form-inline global-search">
+            {% if movie_list %}
+            <h4>Top 3 similar movies of your query: "{{input_query}}"</h4><br>
+            <table style="width:100%; ">
+            <tr>
+                <th>Movie Title</th>
+                <th>Predicted Rating</th>		
+                <th>Real Rating</th>
+                <th>Comments</th>
+            </tr>
+                {% for movie in movie_list %}
+                  <tr>
+                    <td align = "middle">{{movie.0}}</td>
+                    <td align = "middle">{{movie.1}}</td>
+                    <td align = "middle">{{movie.2}}</td>
+                    <td align = "middle">{{movie.3}}</td>
+                  </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            
+            <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 5px;
+            }
+            th {
+                text-align: middle;
+            }
+            </style>
+            
+        </div>
+    </body>
+</html>
