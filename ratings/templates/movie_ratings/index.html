@@ -1,38 +1,83 @@
 <html>
     <head>
+        <title>Movie Rating Prediction</title>
         <link rel="stylesheet" href="/static/bootstrap.min.css">
         <link rel="stylesheet" href="/static/main.css">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'  type='text/css'>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+                font-family: 'Open Sans', sans-serif;
+            }
+            table, th, td {
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 5px;
+                text-align: center;
+                border-bottom: 1px solid #ddd;
+            }
+            table {
+                margin:0 auto;
+                width:75%;
+            }
+            tr:hover{background-color:#f5f5f5}
+            .hehe {
+                padding-left: 20px;
+            }
+            #Top3-text {
+                text-align: center;
+            }
+            #team_members{
+                position: relative;
+                top: 20px;
+                right: 20px;
+                text-align: right;
+            }
+            #word_cloud_div{
+                width = 84%;
+                font-size: 20px;
+            }
+            .float-left {
+                float:left;
+                width:33%;
+            }
+        </style>
     </head>
     
     <body>
-        <!-- TODO: Please change lines 10 and 11 according to your actual project name and student names-->
-        <div class="topcorner">
-            <p>MPAA Film Rating Prediction</p>
-			<p>Yingbing ZHAO (yz672), Shibo ZANG (sz428), Yangwen WANG (yw762), Jingchen LI (jl3426)</p>
+        <div id="team_members">
+			<p>Yingbing ZHAO (yz672), Shibo ZANG (sz428)</p> 
+            <p>Yangwen WANG (yw762), Jingchen LI (jl3426)</p>
         </div>
         
         <form class="form-inline global-search" method='GET'>
-            <h1 style="font-size: 55px; font-family:Futura; color: #4285F4">
+            <h1 ; style="font-size: 35px; font-family:Futura; color: #4285F4">
                 C
                 <font color=#EA4335>S</font>
                 <font color=#FBBC05>4</font>
                 3
                 <font color=#34A853>0</font>
                 <font color=#EA4335>0</font>
-            </h1>
-            
+            </h1><br>
+            <p style="font-size: 30px;">MPAA Film Rating Prediction</p>
             <br><br>
             
             <div class="form-group">
-                <input id="input" type="text" name="search" class="form-control" placeholder="Key words of the movie title">
+                <input id="input" type="text" name="search" class="form-control" placeholder="Key words in movie titles">
             </div>
+            
             <button type="submit" class="btn btn-info"> Go! </button>
         </form>
-        
-        <div class="form-inline global-search">
+
+        <div>
             {% if movie_list %}
-            <h4>Top 3 similar movies of your query: "{{input_query}}"</h4><br>
-            <table style="width:100%; ">
+            <h4 id="Top3-text">Top 3 findings for your query: 
+            <span style="font-weight:bold;">"{{input_query}}"</span>
+            </h4>
+            <br>
+            <table>
             <tr>
                 <th>Movie Title</th>
                 <th>Predicted Rating</th>		
@@ -41,28 +86,135 @@
             </tr>
                 {% for movie in movie_list %}
                   <tr>
-                    <td align = "middle">{{movie.0}}</td>
-                    <td align = "middle">{{movie.1}}</td>
-                    <td align = "middle">{{movie.2}}</td>
-                    <td align = "middle">{{movie.3}}</td>
+                    <td>{{movie.0}}</td>
+                    <td>{{movie.1}}</td>
+                    <td>{{movie.2}}</td>
+                    <td>{{movie.3}}</td>
                   </tr>
                 {% endfor %}
             </table>
             {% endif %}
-            
-            <style>
-            table, th, td {
-                border: 1px solid black;
-                border-collapse: collapse;
-            }
-            th, td {
-                padding: 5px;
-            }
-            th {
-                text-align: middle;
-            }
-            </style>
-            
         </div>
+        
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script src="/static/d3.layout.cloud.js"></script>
+        
+        <br>
+        <p style="font-size: 20px; text-align: center">
+        Word clouds for Top 3 similar movies</p>
+        
+        <div id="word_cloud_div">
+            <h4 align="center"></h4>
+            <div id="word_cloud_1" align="center" class="float-left">{{movie_list.0.0}}</div>
+            <div id="word_cloud_2" align="center" class="float-left">{{movie_list.1.0}}</div>
+            <div id="word_cloud_3" align="center" class="float-left">{{movie_list.2.0}}</div>
+        </div>
+        
+        <script>
+            //document.getElementById("word_cloud_1").align = "left";
+            //document.getElementById("word_cloud_2").align = "center";
+            //document.getElementById("word_cloud_3").align = "right";
+
+            var frequency_list_1 = [{"text":"study","size":40},{"text":"motion","size":15},{"text":"forces","size":20},{"text":"electricity","size":25},{"text":"weight","size":10},{"text":"electrical","size":35}];
+            var frequency_list_2 = [{"text":"WTF","size":40},{"text":"HAHA","size":15},{"text":"Mayday","size":20},{"text":"ZhangZhe","size":25},{"text":"light","size":10},{"text":"KingKong","size":35}];
+            var frequency_list_3 = [{"text":"Batman","size":40},{"text":"TmanBa","size":15},{"text":"ManAtB","size":20},{"text":"Atman","size":25},{"text":"Manbat","size":10},{"text":"Bamant","size":35}];
+            
+            var color = d3.scale.linear()
+                    .domain([0,1,2,3,4,5,6])
+                    .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
+            // word_cloud_1
+            d3.layout.cloud().size([300, 300])
+                    .words(frequency_list_1)
+                    .rotate(0)
+                    .fontSize(function(d) { return d.size; })
+                    .on("end", draw1)
+                    .start();
+            
+            function draw1(words) {
+            var colors = [
+                '#3498DB', '#1478BB', '#00589B', '#54A8FB', '#74C8FF'
+                ];
+            var svg =  d3.select("#word_cloud_1").append("svg")
+                        .attr("width", 300)
+                        .attr("height", 300)
+                        .attr("class", "wordcloud")
+                        .append("g")
+                        // without the transform, words words would get cutoff to the left and top, they would
+                        // appear outside of the SVG area
+                        .attr("transform", "translate(75,115)")
+                        .selectAll("text")
+                        .data(words)
+                        .enter().append("text")
+                        .style("font-size", function(d) { return d.size + "px"; })
+                        .style("fill", function(d, i) { return color(i); })
+                        .attr("transform", function(d) {
+                            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                        })
+                        .text(function(d) { return d.text; });
+            }
+            
+            // word_cloud_2
+            d3.layout.cloud().size([300, 300])
+                    .words(frequency_list_2)
+                    .rotate(0)
+                    .fontSize(function(d) { return d.size; })
+                    .on("end", draw2)
+                    .start();
+            
+            function draw2(words) {
+            var colors = [
+                '#3498DB', '#1478BB', '#00589B', '#54A8FB', '#74C8FF'
+                ];
+            var svg =  d3.select("#word_cloud_2").append("svg")
+                        .attr("width", 300)
+                        .attr("height", 300)
+                        .attr("class", "wordcloud")
+                        .append("g")
+                        // without the transform, words words would get cutoff to the left and top, they would
+                        // appear outside of the SVG area
+                        .attr("transform", "translate(85,110)")
+                        .selectAll("text")
+                        .data(words)
+                        .enter().append("text")
+                        .style("font-size", function(d) { return d.size + "px"; })
+                        .style("fill", function(d, i) { return color(i); })
+                        .attr("transform", function(d) {
+                            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                        })
+                        .text(function(d) { return d.text; });
+            }
+            
+            // word_cloud_3
+            d3.layout.cloud().size([300, 300])
+                    .words(frequency_list_3)
+                    .rotate(0)
+                    .fontSize(function(d) { return d.size; })
+                    .on("end", draw3)
+                    .start();
+            
+            function draw3(words) {
+            var colors = [
+                '#3498DB', '#1478BB', '#00589B', '#54A8FB', '#74C8FF'
+                ];
+            var svg =  d3.select("#word_cloud_3").append("svg")
+                        .attr("width", 300)
+                        .attr("height", 300)
+                        .attr("class", "wordcloud")
+                        .append("g")
+                        // without the transform, words words would get cutoff to the left and top, they would
+                        // appear outside of the SVG area
+                        .attr("transform", "translate(75,115)")
+                        .selectAll("text")
+                        .data(words)
+                        .enter().append("text")
+                        .style("font-size", function(d) { return d.size + "px"; })
+                        .style("fill", function(d, i) { return color(i); })
+                        .attr("transform", function(d) {
+                            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                        })
+                        .text(function(d) { return d.text; });
+            }
+        </script>
+        
     </body>
 </html>
