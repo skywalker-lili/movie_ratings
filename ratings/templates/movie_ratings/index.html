@@ -98,16 +98,25 @@
         
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <script src="/static/d3.layout.cloud.js"></script>
-        
         <br>
+        
+        {% if movie_list %}
         <p style="font-size: 20px; text-align: center">
         Word clouds for Top 3 similar movies</p>
+        {% endif %}
         
         <div id="word_cloud_div">
             <h4 align="center"></h4>
-            <div id="word_cloud_1" align="center" class="float-left">{{movie_list.0.0}}</div>
-            <div id="word_cloud_2" align="center" class="float-left">{{movie_list.1.0}}</div>
-            <div id="word_cloud_3" align="center" class="float-left">{{movie_list.2.0}}</div>
+            <table>
+            <tr>
+                <th>{{movie_list.0.0}}</th>
+                <th>{{movie_list.1.0}}</th>		
+                <th>{{movie_list.2.0}}</th>
+            </tr>
+            </table>
+            <div id="word_cloud_1" align="center" class="float-left"></div>
+            <div id="word_cloud_2" align="center" class="float-left"></div>
+            <div id="word_cloud_3" align="center" class="float-left"></div>
         </div>
         
         <script>
@@ -123,7 +132,7 @@
                     .domain([0,1,2,3,4,5,6])
                     .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
             // word_cloud_1
-            d3.layout.cloud().size([300, 300])
+            d3.layout.cloud().size([300, 250])
                     .words(frequency_list_1)
                     .rotate(0)
                     .fontSize(function(d) { return d.size; })
@@ -136,12 +145,12 @@
                 ];
             var svg =  d3.select("#word_cloud_1").append("svg")
                         .attr("width", 300)
-                        .attr("height", 300)
+                        .attr("height", 250)
                         .attr("class", "wordcloud")
                         .append("g")
                         // without the transform, words words would get cutoff to the left and top, they would
                         // appear outside of the SVG area
-                        .attr("transform", "translate(75,115)")
+                        .attr("transform", "translate(75,105)")
                         .selectAll("text")
                         .data(words)
                         .enter().append("text")
@@ -154,7 +163,7 @@
             }
             
             // word_cloud_2
-            d3.layout.cloud().size([300, 300])
+            d3.layout.cloud().size([300, 250])
                     .words(frequency_list_2)
                     .rotate(0)
                     .fontSize(function(d) { return d.size; })
@@ -167,12 +176,12 @@
                 ];
             var svg =  d3.select("#word_cloud_2").append("svg")
                         .attr("width", 300)
-                        .attr("height", 300)
+                        .attr("height", 250)
                         .attr("class", "wordcloud")
                         .append("g")
                         // without the transform, words words would get cutoff to the left and top, they would
                         // appear outside of the SVG area
-                        .attr("transform", "translate(85,110)")
+                        .attr("transform", "translate(85,105)")
                         .selectAll("text")
                         .data(words)
                         .enter().append("text")
@@ -185,7 +194,7 @@
             }
             
             // word_cloud_3
-            d3.layout.cloud().size([300, 300])
+            d3.layout.cloud().size([300, 250])
                     .words(frequency_list_3)
                     .rotate(0)
                     .fontSize(function(d) { return d.size; })
@@ -198,12 +207,12 @@
                 ];
             var svg =  d3.select("#word_cloud_3").append("svg")
                         .attr("width", 300)
-                        .attr("height", 300)
+                        .attr("height", 250)
                         .attr("class", "wordcloud")
                         .append("g")
                         // without the transform, words words would get cutoff to the left and top, they would
                         // appear outside of the SVG area
-                        .attr("transform", "translate(75,115)")
+                        .attr("transform", "translate(75,105)")
                         .selectAll("text")
                         .data(words)
                         .enter().append("text")
