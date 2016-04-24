@@ -123,14 +123,13 @@
             //document.getElementById("word_cloud_1").align = "left";
             //document.getElementById("word_cloud_2").align = "center";
             //document.getElementById("word_cloud_3").align = "right";
-
+            
+            // 6 words for each movie
             var frequency_list_1 = [{"text":"study","size":40},{"text":"motion","size":15},{"text":"forces","size":20},{"text":"electricity","size":25},{"text":"weight","size":10},{"text":"electrical","size":35}];
             var frequency_list_2 = [{"text":"WTF","size":40},{"text":"HAHA","size":15},{"text":"Mayday","size":20},{"text":"ZhangZhe","size":25},{"text":"light","size":10},{"text":"KingKong","size":35}];
             var frequency_list_3 = [{"text":"Batman","size":40},{"text":"TmanBa","size":15},{"text":"ManAtB","size":20},{"text":"Atman","size":25},{"text":"Manbat","size":10},{"text":"Bamant","size":35}];
             
-            var color = d3.scale.linear()
-                    .domain([0,1,2,3,4,5,6])
-                    .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
+            var color = ["#FFCC00", "#4CD964", "#34AADC", "#007AFF", "#5856D6", "#FF2D55"];
             // word_cloud_1
             d3.layout.cloud().size([300, 250])
                     .words(frequency_list_1)
@@ -140,9 +139,7 @@
                     .start();
             
             function draw1(words) {
-            var colors = [
-                '#3498DB', '#1478BB', '#00589B', '#54A8FB', '#74C8FF'
-                ];
+            
             var svg =  d3.select("#word_cloud_1").append("svg")
                         .attr("width", 300)
                         .attr("height", 250)
@@ -171,9 +168,7 @@
                     .start();
             
             function draw2(words) {
-            var colors = [
-                '#3498DB', '#1478BB', '#00589B', '#54A8FB', '#74C8FF'
-                ];
+            
             var svg =  d3.select("#word_cloud_2").append("svg")
                         .attr("width", 300)
                         .attr("height", 250)
@@ -202,9 +197,7 @@
                     .start();
             
             function draw3(words) {
-            var colors = [
-                '#3498DB', '#1478BB', '#00589B', '#54A8FB', '#74C8FF'
-                ];
+            
             var svg =  d3.select("#word_cloud_3").append("svg")
                         .attr("width", 300)
                         .attr("height", 250)
