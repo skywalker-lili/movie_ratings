@@ -129,7 +129,12 @@
             var frequency_list_2 = [{"text":"WTF","size":40},{"text":"HAHA","size":15},{"text":"Mayday","size":20},{"text":"ZhangZhe","size":25},{"text":"light","size":10},{"text":"KingKong","size":35}];
             var frequency_list_3 = [{"text":"Batman","size":40},{"text":"TmanBa","size":15},{"text":"ManAtB","size":20},{"text":"Atman","size":25},{"text":"Manbat","size":10},{"text":"Bamant","size":35}];
             
-            var color = ["#FFCC00", "#4CD964", "#34AADC", "#007AFF", "#5856D6", "#FF2D55"];
+            var colors = ["#FFCC00", "#4CD964", "#34AADC", "#007AFF","#5856D6",
+            "#FF2D55", "#FF2A68", "#FF9500", "#FF5E3A","#FFDB4C", "#FFCD02"];
+            
+            function rand_color(colors) {
+                return colors[Math.round(Math.random() * (colors.length - 1))];
+            }
             // word_cloud_1
             d3.layout.cloud().size([300, 250])
                     .words(frequency_list_1)
@@ -152,7 +157,7 @@
                         .data(words)
                         .enter().append("text")
                         .style("font-size", function(d) { return d.size + "px"; })
-                        .style("fill", function(d, i) { return color(i); })
+                        .style("fill", function(d) { return rand_color(colors); })
                         .attr("transform", function(d) {
                             return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
                         })
@@ -181,7 +186,7 @@
                         .data(words)
                         .enter().append("text")
                         .style("font-size", function(d) { return d.size + "px"; })
-                        .style("fill", function(d, i) { return color(i); })
+                        .style("fill", function(d) { return rand_color(colors); })
                         .attr("transform", function(d) {
                             return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
                         })
@@ -210,7 +215,7 @@
                         .data(words)
                         .enter().append("text")
                         .style("font-size", function(d) { return d.size + "px"; })
-                        .style("fill", function(d, i) { return color(i); })
+                        .style("fill", function(d, i) { return rand_color(colors); })
                         .attr("transform", function(d) {
                             return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
                         })
