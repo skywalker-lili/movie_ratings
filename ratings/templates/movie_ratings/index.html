@@ -98,13 +98,15 @@
         </div>
         
         <script src="http://d3js.org/d3.v3.min.js"></script>
-        <script src="/static/d3.layout.cloud.js"></script>
+        {% load static from staticfiles %}
+        {% static "d3.layout.cloud.js" as myjs %}
+        <script src="{{myjs}}"></script>
         <br>
         <br>
         
         {% if movie_list %}
-        <p style="font-size: 20px; text-align: center">
-        Word clouds for Top 3 similar movies</p>
+        <h4 style="text-align: center">
+        Word clouds for Top 3 similar movies</h4>
         {% endif %}
         
         <div id="word_cloud_div">
