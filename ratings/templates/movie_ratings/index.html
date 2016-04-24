@@ -70,7 +70,8 @@
             
             <button type="submit" class="btn btn-info"> Go! </button>
         </form>
-
+        
+        <br>
         <div>
             {% if movie_list %}
             <h4 id="Top3-text">Top 3 findings for your query: 
@@ -99,6 +100,7 @@
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <script src="/static/d3.layout.cloud.js"></script>
         <br>
+        <br>
         
         {% if movie_list %}
         <p style="font-size: 20px; text-align: center">
@@ -120,9 +122,6 @@
         </div>
         
         <script>
-            //document.getElementById("word_cloud_1").align = "left";
-            //document.getElementById("word_cloud_2").align = "center";
-            //document.getElementById("word_cloud_3").align = "right";
             
             // 6 words for each movie
             var frequency_list_1 = [{"text":"study","size":40},{"text":"motion","size":15},{"text":"forces","size":20},{"text":"electricity","size":25},{"text":"weight","size":10},{"text":"electrical","size":35}];
@@ -135,6 +134,7 @@
             function rand_color(colors) {
                 return colors[Math.round(Math.random() * (colors.length - 1))];
             }
+            
             // word_cloud_1
             d3.layout.cloud().size([300, 250])
                     .words(frequency_list_1)
