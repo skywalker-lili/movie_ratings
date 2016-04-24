@@ -3,7 +3,7 @@
         <title>Movie Rating Prediction</title>
         <link rel="stylesheet" href="/static/bootstrap.min.css">
         <link rel="stylesheet" href="/static/main.css">
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'  type='text/css'>
+        <link rel='stylesheet' href='/static/openSans.woff2'   type='text/css'>
         <style>
             body {
                 padding: 0;
@@ -120,11 +120,13 @@
         </div>
         
         {% if movie_list %}
-        <script src="http://d3js.org/d3.v3.min.js"></script>
-        <script src="https://www.jasondavies.com/wordcloud/cloud.min.js"></script>
         {% load static from staticfiles %}
-        {% static "d3.layout.cloud.js" as myjs %}
-        //<script src="{{myjs}}"></script>
+        //<script src="http://d3js.org/d3.v3.min.js"></script>
+        //<script src="https://www.jasondavies.com/wordcloud/cloud.min.js"></script>
+        {% static "d3.v3.min.js" as minjs %}
+        <script src="{{minjs}}"></script>
+        {% static "d3.layout.cloud.js" as cloudjs %}
+        <script src="{{cloudjs}}"></script>
         
         <script>
             
