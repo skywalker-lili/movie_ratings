@@ -38,7 +38,7 @@ def top_words(top_dic, k, to_low, to_high):
         temp_weights.append(float(word_weight[1]))
     temp.sort(key = lambda x: x[1], reverse = True) # descending sort by value
     from_low = min(temp_weights)
-    from_high = max(temp_weights)
+    from_high = max(temp_weights)*1.0001
     
     temp_k = []
     for i in range(k): # get the top k value and adjust word size
