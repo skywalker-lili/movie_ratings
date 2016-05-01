@@ -19,10 +19,10 @@ def index(request):
     if request.GET.get('search'):
         search = request.GET.get('search')
         movie_list,freq_1, freq_2, freq_3 = find_similar_3(search, 30) # messaged sorted by distance compared to search_query
+
+    freq_list = [freq_1, freq_2, freq_3]
     return render_to_response('movie_ratings/index.html', \
                              {'movie_list': movie_list,\
                              'input_query':search,\
-                             'freq_1':freq_1,\
-                             'freq_2':freq_2,\
-                             'freq_3':freq_3,})
+                             'freq_list': freq_list})
 
