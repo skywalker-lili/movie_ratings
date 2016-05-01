@@ -132,7 +132,7 @@
             
             // frequency_lists for top 3 movies
             var frequency_list_1 = [];
-            {% for word_weight in freq_1 %}
+            {% for word_weight in freq_list.0 %}
             frequency_list_1.push({
                 "text": "{{word_weight.0}}",
                 "size": {{word_weight.1}}
@@ -140,7 +140,7 @@
             {% endfor %}
             
             var frequency_list_2 = [];
-            {% for word_weight in freq_2 %}
+            {% for word_weight in freq_list.1 %}
             frequency_list_2.push({
                 "text": "{{word_weight.0}}",
                 "size": {{word_weight.1}}
@@ -148,7 +148,7 @@
             {% endfor %}
             
             var frequency_list_3 = [];
-            {% for word_weight in freq_3 %}
+            {% for word_weight in freq_list.2 %}
             frequency_list_3.push({
                 "text": "{{word_weight.0}}",
                 "size": {{word_weight.1}}

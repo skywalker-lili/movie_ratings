@@ -4,16 +4,44 @@ import Levenshtein
 import json
 from django.conf import settings
 
-def read_file(n):
-    relative_path = Movie_File.objects.get(id = n).address;
+def read_file(relative_path):
+    # relative_path = Movie_File.objects.get(id = n).address;
     path = "".join([settings.BASE_DIR, relative_path])
     with open(path) as data_file:
         data = json.load(data_file)
     return data
 
+# Calculate edit distance between query and movie_title    
 def _edit(query, movie_title):
     return Levenshtein.distance(query.lower(), movie_title.lower())
 
+# return the list of movies that has ALL match on the query
+def _inverted_index(query, movies, inverted_index):
+    
+    intersect = []
+    first_word = True
+    for item in query.split():
+        word = item.lower()
+        if first_word:
+            try:
+                intersect = inverted_index[word]
+            except KeyError:
+                continue
+        else:
+            try:
+                for id in intersect:
+                    if id not in inverted_index[word]:
+                        intersect.remove(id)
+            except KeyError:
+                continue
+    
+    # Get the movies whos id are in the intersect
+    intersect_movies = []
+    for id in intersect:
+        intersect_movies.append(movies[id])
+    
+    return intersect_movies
+    
 def find_movie(name, year, movies):
     for movie in movies:
         if movie["name"] == name and movie["year"] == year:
@@ -38,7 +66,7 @@ def top_words(top_dic, k, to_low, to_high):
         temp_weights.append(float(word_weight[1]))
     temp.sort(key = lambda x: x[1], reverse = True) # descending sort by value
     from_low = min(temp_weights)
-    from_high = max(temp_weights)+0.000000001
+    from_high = max(temp_weights)+0.0000001
     
     temp_k = []
     for i in range(k): # get the top k value and adjust word size
@@ -52,25 +80,54 @@ def top_words(top_dic, k, to_low, to_high):
     
     return frequency_list
     
-def find_similar_3(query, k=30):
-    # we store all movie information in one file, so just need to read first file
-    # first file will be automatically named with id = 1 by Django
-    movies = read_file(1)
+def find_similar_n(query, n = 5, k=30):
     
-    temp_result = []
-    for movie in movies:
-        # store the id and each movie's distance to
-        temp_result.append(((_edit(query, " ".join([movie["name"],movie["year"]]))),\
-        movie["name"], movie["year"]))
+    # Read movie information
+    movies = read_file("/ratings/json/movies.json")
+    # Read the inverted index file
+    inverted_index = read_file("/ratings/json/inverted_index.json")
     
-    temp_result = sorted(temp_result, key=lambda x: x[0]) # sort by distance
+    # Get candidate movies by inverted index
+    candidate_movies = _inverted_index(query, movies, inverted_index)
+    candidate_num = len(candidate_movies)
     
-    if len(temp_result)>3:
-        temp_result = temp_result[:3] # only needs top 3 results
+    # For movies in the candidate_movies, re-order by edit distance
+    editDis_result = []
+    for movie in candidate_movies:
+        movie_year = " ".join([movie["name"],movie["year"]]).lower()
+        editDis_result.append([(_edit(query, movie_year)), movie["name"], movie["year"]])
+    
+    editDis_result.sort(key=lambda x: x[0]) # sort by distance
+    
+    if len(editDis_result)> n:
+        editDis_result = editDis_result[:n] # only needs top n results
+    
+    # if the candidates are too short, use edit distance to find rest movies
+    if len(editDis_result) < n:
+        shortage_num = n - len(editDis_result)
+        additional_movies = []
+        for movie in movies:
+            movie_year = " ".join([movie["name"],movie["year"]]).lower()
+            additional_movies.append([(_edit(query, movie_year)), movie["name"], movie["year"]])
         
-    result = [[None]*5, [None]*5, [None]*5] # result as a list of 3 tuples
+        additional_movies.sort(key=lambda x: x[0]) # sort by distance
+        
+        # Append additional_movies if it's not in the editDis_result yet
+        movie_already_in = set([])
+        for movie in editDis_result:
+            movie_already_in.add(movie[1])
+        
+        added_count = 0
+        for movie in additional_movies:
+            if added_count == shortage_num:
+                break
+            if movie[1] not in movie_already_in:
+                editDis_result.append(movie)
+                added_count += 1
+        
+    result = [[None]*5 for i in range(n)] # result as a list of n lists
     count = 0
-    for item in temp_result:
+    for item in editDis_result:
         name = item[1]
         year = item[2]
         movie = find_movie(name, year, movies)
@@ -80,4 +137,4 @@ def find_similar_3(query, k=30):
         result[count][3] = movie['comment'] # get the words for predicting ratings
         result[count][4] = top_words(movie['top_words'], k, 15, 50) # re-arrane the top words
         count += 1
-    return result, result[0][4], result[1][4], result[2][4]
+    return result, [result[i][4] for i in range(n)]
