@@ -68,7 +68,7 @@
                 <input id="input" type="text" name="search" class="form-control" placeholder="Key words in movie titles">
             </div>
             
-            <button type="submit" class="btn btn-info"> Go! </button>
+            <button type="submit" class="btn btn-info" onclick="window.location.hash=''"> Go! </button>
         </form>
         
         <br>
@@ -107,6 +107,7 @@
                     {{ movie.0 }}
                 </h3>
                 <div id="word_cloud_{{ forloop.counter }}" align="center"></div>
+                <center><div style="width:600px;"><pre>{{movie.5}}</pre></div></center>
             </div>
             {% endfor %}
         </div>
@@ -161,103 +162,59 @@
             }
             
             // word_cloud_1
-            d3.layout.cloud().size([600, 400])
-                    .words(frequency_list[0])
-                    .rotate(0)
-                    .fontSize(function(d) { return d.size; })
-                    .on("end", draw1)
-                    .start();
-            
-            function draw1(words) {
-            
-            var svg =  d3.select("#word_cloud_1").append("svg")
-                        .attr("width", 600)
-                        .attr("height", 400)
-                        .attr("class", "wordcloud")
-                        .append("g")
-                        // without the transform, words words would get cutoff to the left and top, they would
-                        // appear outside of the SVG area
-                        .attr("transform", "translate(300,150)")
-                        .selectAll("text")
-                        .data(words)
-                        .enter().append("text")
-                        .style("font-size", function(d) { return d.size + "px"; })
-                        .style("fill", function(d) { return rand_color(colors); })
-                        .attr("transform", function(d) {
-                            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-                        })
-                        .text(function(d) { return d.text; });
-            }
-            
-            // word_cloud_2
-            d3.layout.cloud().size([600, 400])
-                    .words(frequency_list[1])
-                    .rotate(0)
-                    .fontSize(function(d) { return d.size; })
-                    .on("end", draw2)
-                    .start();
-            
-            function draw2(words) {
-            
-            var svg =  d3.select("#word_cloud_2").append("svg")
-                        .attr("width", 600)
-                        .attr("height", 400)
-                        .attr("class", "wordcloud")
-                        .append("g")
-                        // without the transform, words words would get cutoff to the left and top, they would
-                        // appear outside of the SVG area
-                        .attr("transform", "translate(300,150)")
-                        .selectAll("text")
-                        .data(words)
-                        .enter().append("text")
-                        .style("font-size", function(d) { return d.size + "px"; })
-                        .style("fill", function(d) { return rand_color(colors); })
-                        .attr("transform", function(d) {
-                            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-                        })
-                        .text(function(d) { return d.text; });
-            }
-            
-            // word_cloud_3
-            d3.layout.cloud().size([600, 400])
-                    .words(frequency_list[2])
-                    .rotate(0)
-                    .fontSize(function(d) { return d.size; })
-                    .on("end", draw3)
-                    .start();
-            
-            function draw3(words) {
-            
-            var svg =  d3.select("#word_cloud_3").append("svg")
-                        .attr("width", 600)
-                        .attr("height", 400)
-                        .attr("class", "wordcloud")
-                        .append("g")
-                        // without the transform, words words would get cutoff to the left and top, they would
-                        // appear outside of the SVG area
-                        .attr("transform", "translate(280,150)")
-                        .selectAll("text")
-                        .data(words)
-                        .enter().append("text")
-                        .style("font-size", function(d) { return d.size + "px"; })
-                        .style("fill", function(d, i) { return rand_color(colors); })
-                        .attr("transform", function(d) {
-                            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-                        })
-                        .text(function(d) { return d.text; });
+            for (i=1; i<11; i++)
+            {
+                if (i>frequency_list.length)
+                    break;
+                d3.layout.cloud().size([600, 250])
+                        .words(frequency_list[i-1])
+                        .rotate(0)
+                        .fontSize(function(d) { return d.size; })
+                        .on("end", draw1)
+                        .start();
+                
+                function draw1(words) {
+                
+                    var svg =  d3.select("#word_cloud_" + i).append("svg")
+                            .attr("width", 600)
+                            .attr("height", 250)
+                            .attr("class", "wordcloud")
+                            .append("g")
+                            // without the transform, words words would get cutoff to the left and top, they would
+                            // appear outside of the SVG area
+                            .attr("transform", "translate(300,150)")
+                            .selectAll("text")
+                            .data(words)
+                            .enter().append("text")
+                            .style("font-size", function(d) { return d.size + "px"; })
+                            .style("fill", function(d) { return rand_color(colors); })
+                            .attr("transform", function(d) {
+                                return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                            })
+                            .text(function(d) { return d.text; });
+                }
             }
 
             function displayDetail() {
                 var id = window.location.hash.substring(1);
                 var detail = document.getElementById("detail");
+                var e = document.getElementById(id);
+                if (e.style.display != "block")
+                {
+                    e.style.display = "block";
+                    var hash =  window.location.hash;
+                    
+                    setTimeout(function(){ 
+                        window.location.hash = '';
+                        window.location.hash = hash;
+                    }, 100);
+                }
                 for (i=0; i < detail.childNodes.length; i++)
                 {
-                    if (detail.childNodes[i].style) {
+                    if (detail.childNodes[i].style && detail.childNodes[i] != e) {
                         detail.childNodes[i].style.display = "none";
                     }
                 }
-                var e = document.getElementById(id);
-                e.style.display = "block";
             }
 
             window.onload = window.onhashchange = displayDetail;

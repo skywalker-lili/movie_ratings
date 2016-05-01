@@ -65,9 +65,9 @@ def top_words(top_dic, k, to_low, to_high):
         temp.append((word_weight[0], float(word_weight[1])))
         temp_weights.append(float(word_weight[1]))
     temp.sort(key = lambda x: x[1], reverse = True) # descending sort by value
-    from_low = min(temp_weights)
-    from_high = max(temp_weights)+0.0000001
-    
+    from_low = min(temp_weights + [0])
+    from_high = max(temp_weights + [0])+0.0000001
+
     temp_k = []
     for i in range(k): # get the top k value and adjust word size
         temp_k.append((temp[i][0], mapping(temp[i][1], from_low, from_high, to_low, to_high)))
@@ -83,7 +83,7 @@ def top_words(top_dic, k, to_low, to_high):
 def find_similar_n(query, n = 5, k=30):
     
     # Read movie information
-    movies = read_file("/ratings/json/movies.json")
+    movies = read_file("/ratings/json/movies.160501.json")
     # Read the inverted index file
     inverted_index = read_file("/ratings/json/inverted_index.json")
     
@@ -125,7 +125,7 @@ def find_similar_n(query, n = 5, k=30):
                 editDis_result.append(movie)
                 added_count += 1
         
-    result = [[None]*5 for i in range(n)] # result as a list of n lists
+    result = [[None]*6 for i in range(n)] # result as a list of n lists
     count = 0
     for item in editDis_result:
         name = item[1]
@@ -136,5 +136,6 @@ def find_similar_n(query, n = 5, k=30):
         result[count][2] = movie['rating_actual'] # get real ratings
         result[count][3] = movie['comment'] # get the words for predicting ratings
         result[count][4] = top_words(movie['top_words'], k, 15, 50) # re-arrane the top words
+        result[count][5] = movie['preview']
         count += 1
     return result, [result[i][4] for i in range(n)]
