@@ -21,4 +21,3 @@ def index(request):
                              {'movie_list': movie_list,\
                              'input_query':search,\
                              'freq_list':freq_list})
-
