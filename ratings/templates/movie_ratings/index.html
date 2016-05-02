@@ -49,7 +49,7 @@
     <body>
         <div id="team_members">
 			<p>Yingbing ZHAO (yz672), Shibo ZANG (sz428)</p> 
-            <p>Yangwen WANG (yw762), Jingchen LI (jl3426)</p>
+            <p>Yangwen WAN (yw762), Jingchen LI (jl3426)</p>
         </div>
         
         <form class="form-inline global-search" method='GET'>
@@ -108,6 +108,22 @@
                 </h3>
                 <div id="word_cloud_{{ forloop.counter }}" align="center"></div>
                 <center><div style="width:600px;"><pre>{{movie.5}}</pre></div></center>
+                <div id="topic">
+                    <table>
+                    <tr>
+                        <th>Topic</th>
+                        <th>Weight</th>		
+                        <th>Words</th>
+                    </tr>
+                        {% for topic in movie.6 %}
+                          <tr>
+                            <td>{{topic.0}}</td>
+                            <td>{{topic.1}}</td>
+                            <td>{{topic.2}}</td>
+                          </tr>
+                        {% endfor %}
+                    </table>
+                </div>
             </div>
             {% endfor %}
         </div>

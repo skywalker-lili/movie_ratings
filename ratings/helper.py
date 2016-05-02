@@ -48,6 +48,22 @@ def find_movie(name, year, movies):
             return movie
     return "No movie found!"     
 
+def find_topics(name, topic_dict):
+    result = []
+    for topic, weight_word in topic_dict[name].items():
+        temp = []
+        temp.append(topic)
+        temp.append(round(weight_word["weight"],3))
+        words = ", ".join(weight_word["words"])
+        temp.append(words)
+        result.append(temp)
+    
+    # Sort result based on weight
+    result.sort(key = lambda x: x[1], reverse = True)
+    
+    return result 
+    
+
 # Give a value and its old range, linear mapping to a new range as an integer
 def mapping(value, from_low, from_high, to_low, to_high):
     new_value = float(value-from_low)/(from_high-from_low) * (to_high-to_low) + to_low
@@ -79,13 +95,15 @@ def top_words(top_dic, k, to_low, to_high):
         frequency_list.append(temp)
     
     return frequency_list
-    
+
 def find_similar_n(query, n = 5, k=30):
     
     # Read movie information
     movies = read_file("/ratings/json/movies.160501.json")
     # Read the inverted index file
     inverted_index = read_file("/ratings/json/inverted_index.json")
+    # Read the topic json
+    topic_dict = read_file("/ratings/json/name_to_tww.json")
     
     # Get candidate movies by inverted index
     candidate_movies = _inverted_index(query, movies, inverted_index)
@@ -125,17 +143,19 @@ def find_similar_n(query, n = 5, k=30):
                 editDis_result.append(movie)
                 added_count += 1
         
-    result = [[None]*6 for i in range(n)] # result as a list of n lists
+    result = [[None]*7 for i in range(n)] # result as a list of n lists
     count = 0
     for item in editDis_result:
         name = item[1]
         year = item[2]
         movie = find_movie(name, year, movies)
+        topics = find_topics(name, topic_dict) # topics = [[topic1], [topic2],....]
         result[count][0] = name + " (" + year + ")" # format like: "Wizard of Oz (2008)"
         result[count][1] = movie['rating_predict'] # get predicted ratings
         result[count][2] = movie['rating_actual'] # get real ratings
         result[count][3] = movie['comment'] # get the words for predicting ratings
         result[count][4] = top_words(movie['top_words'], k, 15, 50) # re-arrane the top words
         result[count][5] = movie['preview']
+        result[count][6] = topics
         count += 1
     return result, [result[i][4] for i in range(n)]
