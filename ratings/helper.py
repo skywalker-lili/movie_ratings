@@ -3,6 +3,7 @@ import os
 import Levenshtein
 import json
 from django.conf import settings
+import re
 
 def read_file(relative_path):
     # relative_path = Movie_File.objects.get(id = n).address;
@@ -22,16 +23,18 @@ def _inverted_index(query, movies, inverted_index):
     first_word = True
     for item in query.split():
         word = item.lower()
+        word = re.sub(r'\W+', '', word)
+        if len(word) == 0:
+            continue
         if first_word:
             try:
                 intersect = inverted_index[word]
+                first_word = False
             except KeyError:
                 continue
         else:
             try:
-                for id in intersect:
-                    if id not in inverted_index[word]:
-                        intersect.remove(id)
+                intersect = set.intersection(set(intersect), set(inverted_index[word]))
             except KeyError:
                 continue
     
@@ -99,7 +102,7 @@ def top_words(top_dic, k, to_low, to_high):
 def find_similar_n(query, n = 5, k=30):
     
     # Read movie information
-    movies = read_file("/ratings/json/movies.160501.json")
+    movies = read_file("/ratings/json/movies.json")
     # Read the inverted index file
     inverted_index = read_file("/ratings/json/inverted_index.json")
     # Read the topic json
@@ -107,6 +110,11 @@ def find_similar_n(query, n = 5, k=30):
     
     # Get candidate movies by inverted index
     candidate_movies = _inverted_index(query, movies, inverted_index)
+    # print "----------------------"
+    # for movie in candidate_movies:
+    #    print movie["name"]
+    # print "----------------------"
+    
     candidate_num = len(candidate_movies)
     
     # For movies in the candidate_movies, re-order by edit distance
@@ -119,6 +127,10 @@ def find_similar_n(query, n = 5, k=30):
     
     if len(editDis_result)> n:
         editDis_result = editDis_result[:n] # only needs top n results
+    
+    # print "------"
+    # print editDis_result
+    # print "------"
     
     # if the candidates are too short, use edit distance to find rest movies
     if len(editDis_result) < n:
@@ -149,13 +161,18 @@ def find_similar_n(query, n = 5, k=30):
         name = item[1]
         year = item[2]
         movie = find_movie(name, year, movies)
-        topics = find_topics(name, topic_dict) # topics = [[topic1], [topic2],....]
         result[count][0] = name + " (" + year + ")" # format like: "Wizard of Oz (2008)"
         result[count][1] = movie['rating_predict'] # get predicted ratings
         result[count][2] = movie['rating_actual'] # get real ratings
-        result[count][3] = movie['comment'] # get the words for predicting ratings
-        result[count][4] = top_words(movie['top_words'], k, 15, 50) # re-arrane the top words
-        result[count][5] = movie['preview']
-        result[count][6] = topics
+        if movie["comment"] and len(movie['top_words']) < 1:
+            result[count][3] = " "
+        else:
+            result[count][3] = movie["comment"]
+        if movie['rating_actual'] != 'subtitle n/a': # only some movies have subtitle
+            result[count][4] = top_words(movie['top_words'], k, 15, 50) # re-arrane the top words
+            result[count][5] = movie['preview']
+            if name in topic_dict.keys(): # only some movies have topics
+                topics = find_topics(name, topic_dict) # topics = [[topic1], [topic2],....]
+                result[count][6] = topics
         count += 1
     return result, [result[i][4] for i in range(n)]

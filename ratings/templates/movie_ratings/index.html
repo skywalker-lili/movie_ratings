@@ -108,6 +108,7 @@
                 </h3>
                 <div id="word_cloud_{{ forloop.counter }}" align="center"></div>
                 <center><div style="width:600px;"><pre>{{movie.5}}</pre></div></center>
+                {% if movie.6 %}
                 <div id="topic">
                     <table>
                     <tr>
@@ -124,6 +125,7 @@
                         {% endfor %}
                     </table>
                 </div>
+                {% endif %}
             </div>
             {% endfor %}
         </div>

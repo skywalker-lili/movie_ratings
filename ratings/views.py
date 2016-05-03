@@ -16,7 +16,7 @@ def index(request):
     search = "No query input yet"
     if request.GET.get('search'):
         search = request.GET.get('search')
-        movie_list,freq_list = find_similar_n(search, n = 5, k = 30) # messaged sorted by distance compared to search_query
+        movie_list,freq_list = find_similar_n(search, n = 10, k = 30) # messaged sorted by distance compared to search_query
     return render_to_response('movie_ratings/index.html', \
                              {'movie_list': movie_list,\
                              'input_query':search,\
