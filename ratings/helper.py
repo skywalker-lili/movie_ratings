@@ -121,7 +121,7 @@ def find_similar_n(query, n = 5, k=30):
     editDis_result = []
     for movie in candidate_movies:
         movie_year = " ".join([movie["name"],movie["year"]]).lower()
-        editDis_result.append([(_edit(query, movie_year)), movie["name"], movie["year"]])
+        editDis_result.append([(_edit(query.lower(), movie_year.lower())), movie["name"], movie["year"]])
     
     editDis_result.sort(key=lambda x: x[0]) # sort by distance
     
@@ -164,8 +164,8 @@ def find_similar_n(query, n = 5, k=30):
         result[count][0] = name + " (" + year + ")" # format like: "Wizard of Oz (2008)"
         result[count][1] = movie['rating_predict'] # get predicted ratings
         result[count][2] = movie['rating_actual'] # get real ratings
-        if movie["comment"] and len(movie['top_words']) < 1:
-            result[count][3] = " "
+        if len(movie["comment"]) == 0 and len(movie['top_words']) >= 1:
+            result[count][3] = " no comment available"
         else:
             result[count][3] = movie["comment"]
         if movie['rating_actual'] != 'subtitle n/a': # only some movies have subtitle
