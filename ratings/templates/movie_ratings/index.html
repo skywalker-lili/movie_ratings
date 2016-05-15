@@ -107,10 +107,10 @@
         <div id="detail">
             {% for movie in movie_list %}
             <div id="detail_{{ forloop.counter }}" style="display:none">
-                <h3 style="text-align: center;">
-                    {{ movie.0 }}
-                </h3>
+
+                <center><h4>Unsafe words in {{movie.0}}</h4></center>
                 <div id="word_cloud_{{ forloop.counter }}" align="center"></div>
+                <center><h4>Unsafe conversations in {{movie.0}}</h4></center>
                 <center><div style="width:600px;"><pre>{{movie.5}}</pre></div></center>
                 {% if movie.6 %}
                 <div id="topic">
